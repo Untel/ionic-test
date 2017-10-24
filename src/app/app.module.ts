@@ -6,7 +6,15 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { LoginPageModule } from '../pages/login/login.module';
+import { RegisterPageModule } from '../pages/register/register.module';
+import { MessagesPageModule } from '../pages/messages/messages.module';
+import { UsersPageModule } from '../pages/users/users.module';
 
+
+import { AuthProvider } from '../providers/auth/auth';
+import { HttpModule } from '@angular/http';
+import { MessagesProvider } from '../providers/messages/messages';
 @NgModule({
   declarations: [
     MyApp,
@@ -14,7 +22,12 @@ import { HomePage } from '../pages/home/home';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    HttpModule,
+    IonicModule.forRoot(MyApp),
+    LoginPageModule,
+    RegisterPageModule,
+    MessagesPageModule,
+    UsersPageModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -24,7 +37,9 @@ import { HomePage } from '../pages/home/home';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    AuthProvider,
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    MessagesProvider,
   ]
 })
 export class AppModule {}

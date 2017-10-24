@@ -1,0 +1,28 @@
+<!--
+  Generated template for the UsersPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>users</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+      <ion-item *ngFor="let item of users">
+
+        <ion-thumbnail item-start>
+            <img [src]="item.urlPhoto || 'https://icca.univ-paris13.fr/wp-content/plugins/ultimate-member/assets/img/default_avatar.jpg'">
+        </ion-thumbnail>
+
+        <h4>Username: <b>{{ item.username }}</b></h4>
+        <h3>Inscription: <b>{{ item.moment.calendar() }}</b></h3>
+      </ion-item>
+  </ion-list>
+</ion-content>
