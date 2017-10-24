@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, List } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, List, IonicFormInput } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { MessagesProvider } from '../../providers/messages/messages';
 
@@ -27,9 +27,10 @@ export class MessagesPage {
 
   @ViewChild(List) messageList: List;
   
+  
   // @Input('token') token;
   constructor(
-    public navCtrl: NavController, 
+    public navCtrl: NavController,
     public navParams: NavParams, 
     private auth: AuthProvider, 
     private messageService: MessagesProvider) {
@@ -43,11 +44,11 @@ export class MessagesPage {
   }
 
   sendMessage(form) {
-    console.log(form);
     
     const message = form.value.message;
     this.messageService.sendMessage(message).subscribe(send => {
       this.refreshMesages();
+      form.value.message = '';
     });
   }
 
