@@ -1,4 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+
 import { IonicPage, NavController, NavParams, List, IonicFormInput } from 'ionic-angular';
 import { AuthProvider } from '../../providers/auth/auth';
 import { MessagesProvider } from '../../providers/messages/messages';
@@ -43,20 +45,28 @@ export class MessagesPage {
     this.refreshMesages();
   }
 
-  sendMessage(form) {
+  sendMessage(form: NgForm) {
     
     const message = form.value.message;
     this.messageService.sendMessage(message).subscribe(send => {
       this.refreshMesages();
-      form.value.message = '';
+      form.setValue({
+        message: ''
+      });
     });
   }
 
   refreshMesages(refresher?) {
+    if (refresher) this.messageService.forceRefresh();
     this.messages$
       .subscribe(response => {
-        
-        this.messages = response.sort((a, b) => b.date - a.date);
+        if (response && response.sort) {
+          // Le settimeout est la pour empécher le bug de checking
+          setTimeout(() => this.messages = response.sort((a, b) => b.date - a.date), 0);
+        } else {
+          console.log('no sort ?', response);
+          
+        }
         if (refresher) refresher.complete();
       });
 

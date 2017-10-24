@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { Observable, Subject, ReplaySubject } from 'rxjs';
+import { Observable, Subject, ReplaySubject, BehaviorSubject } from 'rxjs';
 import { AuthProvider } from '../../providers/auth/auth';
 import * as _m from 'moment';
 import 'rxjs/add/operator/map';
@@ -25,9 +25,9 @@ export class MessagesProvider {
 
   constructor(private http: Http, private auth: AuthProvider) {
     _m.locale('fr');
-    this.messageSubject = new ReplaySubject(1);
-
-    Observable.interval(3000)
+    this.messageSubject = new BehaviorSubject(1);
+    this.forceRefresh();
+    Observable.interval(5000)
       .switchMap(() => this.getMessagesObs())
       .subscribe((data) => {
         this.messageSubject.next(data);
@@ -35,8 +35,7 @@ export class MessagesProvider {
   }
 
   getMessagesObs (): Observable<any> {
-    return this.http
-      .get(`${this.baseUrl}/messages`, { headers: this.auth.getHeaders() })
+    return this.http.get(`${this.baseUrl}/messages`, { headers: this.auth.getHeaders() })
       .map(response => response.json())
       .map(users => users.map(u => {
         u.moment = _m(u.date);
@@ -48,6 +47,11 @@ export class MessagesProvider {
   getMessages (): Observable<any> {
     return this.messageSubject.asObservable();
   }
+  forceRefresh () {
+    this.getMessagesObs().subscribe(data => {
+      this.messageSubject.next(data);
+    });
+  }
 
   sendMessage(message): Observable<any> {
     const body = `message=${message}`;
@@ -56,8 +60,7 @@ export class MessagesProvider {
   }
 
   getUsers (): Observable<any> {
-    return this.http
-      .get(`${this.baseUrl}/users`, { headers: this.auth.getHeaders() })
+    return this.http.get(`${this.baseUrl}/users`, { headers: this.auth.getHeaders() })
       .map(response => response.json())
       .map(users => users.map(u => {
         u.moment = _m(u.date);
